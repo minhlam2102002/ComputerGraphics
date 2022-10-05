@@ -1,0 +1,7 @@
+[
+    {
+        "command": "g++ main.cpp -o main -lglut -lGLU -lGL ",
+        "directory": "/home/minhlam/SchoolSpace/ComputerGraphics/BTCN-01",
+        "file": "/home/minhlam/SchoolSpace/ComputerGraphics/BTCN-01/main.cpp"
+    }
+]

@@ -1,25 +1,32 @@
 #pragma once
-#include "Pixel.h"
+#include "Point.h"
 
 class Circle {
 private:
-    Pixel p;
+    Point p;
     double r;
 public:
-    Circle(Pixel p, double r) : p(p), r(r) {}
-    vector<Pixel> drawingByMidPixel() {
-        vector<Pixel> res;
+    Circle(Point p, double r) {
+        this->p = p;
+        this->r = r;
+    }
+    Circle(vector<int> coords) {
+        this->p = Point(coords[0], coords[1]);
+        this->r = coords[2];
+    }
+    vector<Point> drawByMidPoint() {
+        vector<Point> res;
         double x = 0, y = r;
         double d = 1 - r;
         while (x <= y) {
-            res.push_back(Pixel(x, y));
-            res.push_back(Pixel(x, -y));
-            res.push_back(Pixel(-x, y));
-            res.push_back(Pixel(-x, -y));
-            res.push_back(Pixel(y, x));
-            res.push_back(Pixel(y, -x));
-            res.push_back(Pixel(-y, x));
-            res.push_back(Pixel(-y, -x));
+            res.push_back(Point(x, y));
+            res.push_back(Point(x, -y));
+            res.push_back(Point(-x, y));
+            res.push_back(Point(-x, -y));
+            res.push_back(Point(y, x));
+            res.push_back(Point(y, -x));
+            res.push_back(Point(-y, x));
+            res.push_back(Point(-y, -x));
             if (d < 0) {
                 d += 2 * x + 3;
             } else {
