@@ -10,9 +10,6 @@ using namespace std;
 using namespace std::chrono;
 using namespace std::placeholders;
 
-const int WINDOW_WIDTH = 1000, WINDOW_HEIGHT = 500;
-const int WINDOW_X = 400, WINDOW_Y = 150;
-
 int option;
 vector<int> args;
 
@@ -120,6 +117,13 @@ void display() {
             int time = measureTime(bind(&Hyperbola::drawByMidPoint, hyperbola));
             cout << "Drawing by Mid-Point tooks: " << time << " microseconds" << endl;
 
+            args[0] += WINDOW_WIDTH/2;
+
+            // draw hyperbola using OpenGL
+            glColor3f(0.0, 0.0, 1.0);
+            Hyperbola hyperbolaGL(args);
+            int GLTime = measureTime(bind(&Hyperbola::drawByGL, hyperbolaGL));
+            cout << "Drawing by OpenGL tooks: " << GLTime << " microseconds" << endl;
             break;
         }
         default:
@@ -127,9 +131,9 @@ void display() {
     }
 }
 
-void reshape(GLsizei width, GLsizei height) {
-    glClear(GL_COLOR_BUFFER_BIT);
-}
+// void reshape(GLsizei width, GLsizei height) {
+//     glClear(GL_COLOR_BUFFER_BIT);
+// }
 
 int main(int argc, char** argv) {
     parseArguments(argc, argv);

@@ -17,14 +17,14 @@ public:
     }
     void drawByDDA() {
         // DDA is short for Digital Differential Analyzer
-        int dx = this->p2.x - this->p1.x;
-        int dy = this->p2.y - this->p1.y;
+        const int dx = this->p2.x - this->p1.x;
+        const int dy = this->p2.y - this->p1.y;
         float x = this->p1.x;
         float y = this->p1.y;
 
         int step = max(abs(dx), abs(dy));
-        float xInc = 1.0 * dx / step;
-        float yInc = 1.0 * dy / step;
+        const float xInc = (float)dx / step;
+        const float yInc = (float)dy / step;
         // running
         glBegin(GL_POINTS);
         glVertex2i(x, y);
@@ -37,24 +37,38 @@ public:
         glFlush();
     }
     void drawByBresenham() {
-        float dx = this->p2.x - p1.x;
-        float dy = this->p2.y - p1.y;
-        float x = p1.x, y = p1.y;
-        float p = 2 * dy - dx;
-        float const1 = 2 * dy;
-        float const2 = 2 * (dy - dx);
+        const int dx = this->p2.x - this->p1.x;
+        const int dy = this->p2.y - this->p1.y;
+        int x = this->p1.x;
+        int y = this->p1.y;
+        int p = 2 * dy - dx;
+        const int const1 = 2 * dy;
+        const int const2 = 2 * (dy - dx);
         // running
         glBegin(GL_POINTS);
         glVertex2i(x, y);
-        while (x < this->p2.x) {
-            if (p < 0) {
-                p += const1;
-            } else {
-                p += const2;
-                y++;
+        if (dx > dy) {
+            while (x < this->p2.x) {
+                if (p < 0) {
+                    p += const1;
+                } else {
+                    p += const2;
+                    y++;
+                }
+                x++;
+                glVertex2i(x, y);
             }
-            x++;
-            glVertex2i(x, y);
+        } else {
+            while (y < this->p2.y) {
+                if (p < 0) {
+                    p += const1;
+                    x++;
+                } else {
+                    p += const2;
+                }
+                y++;
+                glVertex2i(x, y);
+            }
         }
         glEnd();
         glFlush();

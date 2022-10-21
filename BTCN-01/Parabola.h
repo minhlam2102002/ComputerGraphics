@@ -9,33 +9,36 @@ public:
         this->p = Point(args[0], args[1]);
         this->a = args[2];
     }
+    float eval(const float &x, const float &y) const {
+        return x * x - 4 * this->a * y;
+    }
     void drawByMidPoint() {
-        const int SIZE = 500;
         int x = 0, y = 0;
-        int f = 1 - 2 * this->a;
+        int f = round(this->eval(x + 1, y + 0.5));
+        int dx = 0, dy = -4 * this->a;
+
         glBegin(GL_POINTS);
         this->p.draw2SymPoints(x, y);
-        // while (this->p.x + x < SIZE && this->p.y + y < SIZE && this->p.x - x > 0 && this->p.x - x > 0) {
-        while (x <= 2 * this->a) {
+        while (dx < abs(dy) && isInWindow(x, y)) {
             x++;
+            dx += 2;
             if (f < 0) {
-                f += 2 * x + 1;
+                f += 2 * x + 3;
             } else {
                 y++;
-                f += 2 * x + 1 - 4 * this->a;
+                f += 2 * x + 3 - 4 * this->a;
             }
             this->p.draw2SymPoints(x, y);
         }
-        f = round(4*x*x + 4*x + 1 - 16 * this->a * (y - 1));
-        while (this->p.x + x < SIZE && this->p.y + y < SIZE && this->p.x - x > 0 && this->p.x - x > 0) {
+        f = round(this->eval(x + 0.5, y + 1));
+        while (isInWindow(x, y)) {
             y++;
-            if (f < 0) {
-                f += -16 * this->a;
+            if (f >= 0) {
+                f += -4 * this->a;
             } else {
                 x++;
-                f += -16 * this->a + 8 * x;
+                f += -4 * this->a + 2 * x + 3;
             }
-            cout << x << ' ' << y << endl;
             this->p.draw2SymPoints(x, y);
         }
         glEnd();
@@ -43,8 +46,8 @@ public:
     }
     void drawByGL() {
         const int SIZE = 1000;
-        glBegin(GL_POINTS);
         int x = 0, y = 0;
+        glBegin(GL_POINTS);
         this->p.draw2SymPoints(x, y);
         while (x <= 2 * this->a) {
             x++;
@@ -54,7 +57,6 @@ public:
         while (this->p.x + x < SIZE && this->p.y + y < SIZE && this->p.x - x > 500 && this->p.x - x > 500) {
             y++;
             x = sqrt(4 * this->a * y);
-            cout << x << ' ' << y << endl;
             this->p.draw2SymPoints(x, y);
         }
         glEnd();
