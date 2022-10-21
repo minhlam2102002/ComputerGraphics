@@ -4,14 +4,6 @@ class Line {
 private:
     Point p1, p2;
 public:
-    Line() {
-        this->p1 = Point();
-        this->p2 = Point();
-    }
-    Line(Point A, Point B) {
-        this->p1 = A;
-        this->p2 = B;
-    }
     Line(vector<int> args) {
         this->p1 = Point(args[0], args[1]);
         this->p2 = Point(args[2], args[3]);
@@ -25,29 +17,32 @@ public:
     }
     void drawByDDA() {
         // DDA is short for Digital Differential Analyzer
-        int dx = this->p2.x - p1.x;
-        int dy = this->p2.y - p1.y;
-        double m = 1.0 * dy / dx;
-        int x = p1.x;
-        double y = p1.y;
+        int dx = this->p2.x - this->p1.x;
+        int dy = this->p2.y - this->p1.y;
+        float x = this->p1.x;
+        float y = this->p1.y;
+
+        int step = max(abs(dx), abs(dy));
+        float xInc = 1.0 * dx / step;
+        float yInc = 1.0 * dy / step;
         // running
         glBegin(GL_POINTS);
         glVertex2i(x, y);
-        while (x < this->p2.x) {
-            x += 1;
-            y += m;
-            glVertex2i(x, round(y));
+        while (step--) {
+            x += xInc;
+            y += yInc;
+            glVertex2i(round(x), round(y));
         }
         glEnd();
         glFlush();
     }
     void drawByBresenham() {
-        double dx = this->p2.x - p1.x;
-        double dy = this->p2.y - p1.y;
-        double x = p1.x, y = p1.y;
-        double p = 2 * dy - dx;
-        double const1 = 2 * dy;
-        double const2 = 2 * (dy - dx);
+        float dx = this->p2.x - p1.x;
+        float dy = this->p2.y - p1.y;
+        float x = p1.x, y = p1.y;
+        float p = 2 * dy - dx;
+        float const1 = 2 * dy;
+        float const2 = 2 * (dy - dx);
         // running
         glBegin(GL_POINTS);
         glVertex2i(x, y);
