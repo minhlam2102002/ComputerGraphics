@@ -12,14 +12,14 @@ public:
         this->p1 = A;
         this->p2 = B;
     }
-    Line(vector<int> coords) {
-        this->p1 = Point(coords[0], coords[1]);
-        this->p2 = Point(coords[2], coords[3]);
+    Line(vector<int> args) {
+        this->p1 = Point(args[0], args[1]);
+        this->p2 = Point(args[2], args[3]);
     }
     void drawByGL() {
         glBegin(GL_LINES);
-            glVertex2f(this->p1.x, this->p1.y);
-            glVertex2f(this->p2.x, this->p2.y);
+            glVertex2i(this->p1.x, this->p1.y);
+            glVertex2i(this->p2.x, this->p2.y);
         glEnd();
         glFlush();
     }
@@ -32,11 +32,11 @@ public:
         double y = p1.y;
         // running
         glBegin(GL_POINTS);
-        glVertex2f(x, y);
+        glVertex2i(x, y);
         while (x < this->p2.x) {
             x += 1;
             y += m;
-            glVertex2f(x, round(y));
+            glVertex2i(x, round(y));
         }
         glEnd();
         glFlush();
@@ -50,7 +50,7 @@ public:
         double const2 = 2 * (dy - dx);
         // running
         glBegin(GL_POINTS);
-        glVertex2f(x, y);
+        glVertex2i(x, y);
         while (x < this->p2.x) {
             if (p < 0) {
                 p += const1;
@@ -59,7 +59,7 @@ public:
                 y++;
             }
             x++;
-            glVertex2f(x, y);
+            glVertex2i(x, y);
         }
         glEnd();
         glFlush();

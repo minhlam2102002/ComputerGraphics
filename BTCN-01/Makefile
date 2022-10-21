@@ -9,7 +9,7 @@ CFLAGS =
 
 all: main
 
-main: main.cpp Point.h Line.h
+main: main.cpp Point.h Line.h Circle.h Parabola.h Hyperbola.h Ellipse.h
 	$(CXX) main.cpp -o main $(LIBS) $(CFLAGS)
 
 # main: main.o

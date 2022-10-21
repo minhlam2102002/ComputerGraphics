@@ -1,9 +1,11 @@
 #include <chrono>
 #include "Line.h"
 #include "Point.h"
-// #include "Circle.h"
-// #include "Ellipse.h"
-// #include "Hyperbole.h"
+#include "Circle.h"
+#include "Ellipse.h"
+#include "Parabola.h"
+#include "Hyperbola.h"
+
 using namespace std;
 using namespace std::chrono;
 using namespace std::placeholders;
@@ -29,44 +31,97 @@ void parseArguments(int& argc, char** argv) {
 }
 
 void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
     glBegin(GL_LINES);
-        glVertex2f(WINDOW_WIDTH/2, 0);
-        glVertex2f(WINDOW_WIDTH/2, WINDOW_HEIGHT);
+        glVertex2i(WINDOW_WIDTH/2, 0);
+        glVertex2i(WINDOW_WIDTH/2, WINDOW_HEIGHT);
     glEnd();
+    glFlush();
+
     switch (option) {
-        case 0: {
-            // draw line using DDA
+        case 0: case 1: {
+            // draw line
             glColor3f(1.0, 0.0, 0.0);
-            Line lineDDA = Line(args);
-            int DDATime = measureTime(bind(&Line::drawByDDA, lineDDA));
-            cout << "Drawing by DDA tooks: " << DDATime << " microseconds" << endl;
+            Line line(args);
+
+            if (option == 0)  {
+                int time = measureTime(bind(&Line::drawByDDA, line)); 
+                cout << "Drawing by DDA tooks: " << time << " microseconds" << endl;
+            } else {
+                int time = measureTime(bind(&Line::drawByBresenham, line));
+                cout << "Drawing by Bresenham tooks: " << time << " microseconds" << endl;
+            }
             
             args[0] += WINDOW_WIDTH/2;
             args[2] += WINDOW_WIDTH/2;
+
             glColor3f(0.0, 0.0, 1.0);
             Line lineGL = Line(args);
             int GLTime = measureTime(bind(&Line::drawByGL, lineGL));
             cout <<  "Drawing by OpenGL tooks: " << GLTime << " microseconds" << endl;
             break;
         }
-        case 1:
-            // draw line using Bresenham
-            // Line l2(args);
-            // line.drawByBresenham();
-            break;
-        case 2:
+        case 2: {
             // draw circle using Mid-Point
-            // Circle circle(args);
+            cout << "Drawing circle using Mid-Point" << endl;
+            Circle cirle(args);
+            glColor3f(1.0, 0.0, 0.0);
+            int time = measureTime(bind(&Circle::drawByMidPoint, cirle));
+            cout << "Drawing by Mid-Point tooks: " << time << " microseconds" << endl;
+
+            args[0] += WINDOW_WIDTH/2;
+
+            // draw circle using OpenGL
+            glColor3f(0.0, 0.0, 1.0);
+            Circle circleGL(args);
+            int GLTime = measureTime(bind(&Circle::drawByGL, circleGL));
+            cout << "Drawing by OpenGL tooks: " << GLTime << " microseconds" << endl;
             break;
-        case 3:
+        }
+        case 3: {
             // draw ellipse using Mid-Point
+            cout << "Drawing ellipse using Mid-Point" << endl;
+            Ellipse ellipse(args);
+            glColor3f(1.0, 0.0, 0.0);
+            int time = measureTime(bind(&Ellipse::drawByMidPoint, ellipse));
+            cout << "Drawing by Mid-Point tooks: " << time << " microseconds" << endl;
+
+            args[0] += WINDOW_WIDTH/2;
+
+            // draw ellipse using OpenGL
+            glColor3f(0.0, 0.0, 1.0);
+            Ellipse ellipseGL(args);
+            int GLTime = measureTime(bind(&Ellipse::drawByGL, ellipseGL));
+            cout << "Drawing by OpenGL tooks: " << GLTime << " microseconds" << endl;
             break;
-        case 4:
+        }
+        case 4: {
+            // draw parabola using Mid-Point
+            cout << "Drawing parabola using Mid-Point" << endl;
+            Parabola parabola(args);
+            glColor3f(1.0, 0.0, 0.0);
+            int time = measureTime(bind(&Parabola::drawByMidPoint, parabola));
+            cout << "Drawing by Mid-Point tooks: " << time << " microseconds" << endl;
+            
+            args[0] += WINDOW_WIDTH/2;
+
+            // draw parabola using OpenGL
+            glColor3f(0.0, 0.0, 1.0);
+            Parabola parabolaGL(args);
+            int GLTime = measureTime(bind(&Parabola::drawByGL, parabolaGL));
+            cout << "Drawing by OpenGL tooks: " << GLTime << " microseconds" << endl;
+            break;
+        }
+        case 5: {
+            // draw hyperbola using Mid-Point
+            cout << "Drawing hyperbola using Mid-Point" << endl;
+            Hyperbola hyperbola(args);
+            glColor3f(1.0, 0.0, 0.0);
+            int time = measureTime(bind(&Hyperbola::drawByMidPoint, hyperbola));
+            cout << "Drawing by Mid-Point tooks: " << time << " microseconds" << endl;
 
             break;
-        case 5:
-
-            break;
+        }
         default:
             break;
     }
@@ -96,7 +151,7 @@ int main(int argc, char** argv) {
     glutDisplayFunc(display);
 
     // register reshape callback
-    glutReshapeFunc(reshape);
+    // glutReshapeFunc(reshape);
 
     // enter the main loop
     glutMainLoop();
