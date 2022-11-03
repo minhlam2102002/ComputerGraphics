@@ -58,7 +58,7 @@ void Window::registerMouseCallback(void (*mouseCallback)(int button, int state,i
 }
 RGBColor* Window::getPixelColor(int x, int y) {
     float pixel[3];
-    glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, &pixel);
+    glReadPixels(x, y, 1, 1, GL_RGBA, GL_FLOAT, &pixel);
     RGBColor* color = new RGBColor(pixel);
     return color;
 }
