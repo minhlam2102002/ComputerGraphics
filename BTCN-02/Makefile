@@ -14,8 +14,8 @@ LIBS_DIR = ./release/libs/
 
 FLAGS = -Wl,-rpath,$(LIBS_DIR)
 
-SRCS = $(wildcard src/views/*.cpp)
-HEADERS = $(wildcard src/views/*.h)
+SRCS = $(wildcard src/views/*.cpp src/geometry/*.cpp)
+HEADERS = $(wildcard src/views/*.h src/geometry/*.h src/geometry/basic/*.h)
 OBJS = $(SRCS:%.cpp=%.o)
 
 TARGET = src/main.cpp
@@ -25,7 +25,6 @@ LINKERFLAG = -lm
 all: $(OBJS) main
 
 %.o: %.cpp
-	@echo $(SRCS) $(OBJS)
 	${CXX} -c $< -o $@ $(LIBS)
 main: $(TARGET) $(SRCS) $(HEADERS)
 	$(CXX) -lm $(TARGET) $(OBJS) -o main $(LIBS)

@@ -36,7 +36,7 @@ void Window::setMouseCursor(int cursor) {
 void Window::configureClippingArea() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0, this->_width, 0, this->_height);
+    gluOrtho2D(0, this->_width, this->_height, 0);
 }
 void Window::registerDisplayCallback(void (*displayCallback)(void)) {
     glutDisplayFunc(displayCallback);
@@ -44,12 +44,24 @@ void Window::registerDisplayCallback(void (*displayCallback)(void)) {
 void Window::registerReshapeCallback(void (*reshapeCallback)(GLsizei, GLsizei)) {
     glutReshapeFunc(reshapeCallback);
 }
+void Window::registerMotionCallback(void (*motionCallback)(int x, int y)) {
+    glutMotionFunc(motionCallback);
+}
+void Window::registerPassiveMotionCallback(void (*passiveMotionCallback)(int x, int y)) {
+    glutPassiveMotionFunc(passiveMotionCallback);
+}
 void Window::start() { 
     glutMainLoop(); 
 }
-bool Window::contain(int x, int y) {
-    return 0 <= x && x < this->_width && 0 <= y && y < this->_height;
-}
 void Window::registerMouseCallback(void (*mouseCallback)(int button, int state,int x, int y)) {
     glutMouseFunc(mouseCallback);
+}
+RGBColor* Window::getPixelColor(int x, int y) {
+    float pixel[3];
+    glReadPixels(x, y, 1, 1, GL_RGB, GL_FLOAT, &pixel);
+    RGBColor* color = new RGBColor(pixel);
+    return color;
+}
+void Window::clearScreen() {
+    glClear(GL_COLOR_BUFFER_BIT);
 }

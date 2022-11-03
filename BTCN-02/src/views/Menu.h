@@ -1,5 +1,5 @@
 #include "../library.h"
-
+#pragma once
 class Entry {
 protected:
     static int idCounter;

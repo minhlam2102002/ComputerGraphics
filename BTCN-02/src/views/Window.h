@@ -1,5 +1,6 @@
+#pragma once
 #include "../library.h"
-
+#include "../geometry/Color.h"
 class Window {
 private:
     static Window *_window;
@@ -20,6 +21,9 @@ public:
     void registerDisplayCallback(void (*)(void));
     void registerReshapeCallback(void (*)(GLsizei, GLsizei));
     void registerMouseCallback(void (*func)(int button, int state,int x, int y));
+    void registerMotionCallback(void (*func)(int x, int y));
+    void registerPassiveMotionCallback(void (*func)(int x, int y));
+    void clearScreen();
     void start();
-    bool contain(int x, int y);
+    RGBColor* getPixelColor(int x, int y);
 };
