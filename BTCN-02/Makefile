@@ -3,36 +3,35 @@
 # make build  # build the release binary
 # make clean  # remove ALL binaries and objects
 
-.PHONY = all clean
+.PHONY = all clean main
 
 RELEASE_DIR := ./release
 SRC_DIRS := ./src
 
-
 LIBS = -lglut -lGLU -lGL
 LIBS_DIR = ./release/libs/
 
-FLAGS = -Wl,-rpath,$(LIBS_DIR)
-
-SRCS = $(wildcard src/views/*.cpp src/geometry/*.cpp)
-HEADERS = $(wildcard src/views/*.h src/geometry/*.h src/geometry/basic/*.h)
-OBJS = $(SRCS:%.cpp=%.o)
+# FLAGS = -Wl,-rpath,$(LIBS_DIR)
+LINKERFLAG = -lm
 
 TARGET = src/main.cpp
+SRCS := $(wildcard src/*.cpp)
+SRCS := $(filter-out $(TARGET), $(SRCS))
+HDRS = $(wildcard src/*.h)
+OBJS = $(SRCS:%.cpp=%.o)
 
-LINKERFLAG = -lm
 
 all: $(OBJS) main
 
 %.o: %.cpp
 	${CXX} -c $< -o $@ $(LIBS)
-main: $(TARGET) $(SRCS) $(HEADERS)
+main: $(TARGET) $(SRCS) $(HDRS)
 	$(CXX) -lm $(TARGET) $(OBJS) -o main $(LIBS)
 
-# release: main.cpp
+# build: main.cpp
 # 	@echo "Building release..."
 # 	$(CXX) main.cpp -o ../release/main -L$(LIBS_DIR) $(LIBS) $(FLAGS)
 
 clean:
 	@echo "Cleaning up..."
-	$(RM)  *.o src/views/*.o src/geometry/*.o main
+	$(RM)  *.o src/*.o main

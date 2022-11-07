@@ -1,15 +1,16 @@
-#include "views/Menu.h"
-#include "views/Window.h"
-#include "geometry/RenderEngine.h"
+#include "Menu.h"
+#include "RenderEngine.h"
+
 void displayCallback() {
-    glClear(GL_COLOR_BUFFER_BIT);
+    RenderEngine::getInstance()->render();
+    glFlush();
 }
 void reshapeCallback(GLsizei width, GLsizei height) {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 void menuCallback(int option) {
-    cout << "Option " << option << " selected" << endl;
-    RenderEngine::getInstance()->setRenderState(option);
+    cout << "Option " << option << " is chosen." << endl;
+    RenderEngine::getInstance()->setState(option);
 }
 void mouseCallback(int button, int state, int x, int y) {
     RenderEngine::getInstance()->onMouseClick(button, state, x, y);
@@ -17,12 +18,8 @@ void mouseCallback(int button, int state, int x, int y) {
 void motionCallback(int x, int y) {
     RenderEngine::getInstance()->onMouseMove(x, y);
 }
-void passiveMotionCallback(int x, int y) {
-    RenderEngine::getInstance()->onMousePassiveMove(x, y);
-}
 void createMenu() {
     Menu* menu = new Menu("Main");
-    menu->registerMenuCallback(menuCallback);
     menu->addEntries({"Brush"});
     menu->addEntries({"Line"});
     menu->addSubMenu("Quadrangle")
@@ -40,23 +37,35 @@ void createMenu() {
     menu->addEntries({"Erase"});
     menu->addEntries({"Clear"});
     menu->addEntries({"Quit"});
-    menu->create();
+    menu->create(menuCallback);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
+int SCREEN_WIDTH = 800;
+int SCREEN_HEIGHT = 600;
+
 int main(int argc, char** argv) {
-    Window* window = Window::getInstance(1000, 600, 100, 100);
-    window->init(argc, argv);
-    window->setTitle("Computer Graphics");
-    // window->setBackgroundColor(0.9, 0.9, 0.9);
-    window->setMouseCursor(GLUT_CURSOR_CROSSHAIR);
-    window->configureClippingArea();
-    window->registerDisplayCallback(displayCallback);
-    window->registerReshapeCallback(reshapeCallback);
-    window->registerMouseCallback(mouseCallback);
-    window->registerMotionCallback(motionCallback);
-    window->registerPassiveMotionCallback(passiveMotionCallback);
+    glutInit(&argc, argv);
+    glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+    glutInitWindowPosition(0, 0);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    
+    glutCreateWindow("My Paint");
+    
+    glutSetCursor(GLUT_CURSOR_CROSSHAIR);
+    glClearColor(0, 0, 0, 1);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+
+    glutDisplayFunc(displayCallback);
+    glutReshapeFunc(reshapeCallback);
+    glutMotionFunc(motionCallback);
+    glutMouseFunc(mouseCallback);
+    
     createMenu();
-    window->start();
+
+    glutMainLoop(); 
     return 0;
 }
