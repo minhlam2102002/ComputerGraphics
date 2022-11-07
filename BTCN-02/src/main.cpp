@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include "RenderEngine.h"
+#include "Window.h"
 
 void displayCallback() {
     RenderEngine::getInstance()->render();
@@ -7,6 +8,7 @@ void displayCallback() {
 }
 void reshapeCallback(GLsizei width, GLsizei height) {
     glClear(GL_COLOR_BUFFER_BIT);
+    Window::getInstance()->reshapeCallback(width, height);
 }
 void menuCallback(int option) {
     cout << "Option " << option << " is chosen." << endl;
@@ -41,31 +43,19 @@ void createMenu() {
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
-int SCREEN_WIDTH = 800;
-int SCREEN_HEIGHT = 600;
-
 int main(int argc, char** argv) {
-    glutInit(&argc, argv);
-    glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    glutInitWindowPosition(0, 0);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    
-    glutCreateWindow("My Paint");
-    
-    glutSetCursor(GLUT_CURSOR_CROSSHAIR);
-    glClearColor(0, 0, 0, 1);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-
-    glutDisplayFunc(displayCallback);
-    glutReshapeFunc(reshapeCallback);
-    glutMotionFunc(motionCallback);
-    glutMouseFunc(mouseCallback);
-    
+    Window* window = Window::getInstance(1000, 600, 100, 100);
+    window->init(argc, argv);
+    window->setDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    window->setTitle("My Paint");
+    // window->setBackgroundColor(0.9, 0.9, 0.9);
+    window->setMouseCursor(GLUT_CURSOR_CROSSHAIR);
+    window->configureClippingArea();
+    window->registerDisplayCallback(displayCallback);
+    window->registerReshapeCallback(reshapeCallback);
+    window->registerMouseCallback(mouseCallback);
+    window->registerMotionCallback(motionCallback);
     createMenu();
-
-    glutMainLoop(); 
+    window->start();
     return 0;
 }

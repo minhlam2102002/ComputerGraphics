@@ -16,7 +16,7 @@ public:
     virtual void addToMenu();
     virtual int create(void (*)(int));
 };
-
+// -----------------------------------------------------------
 class Menu : public Entry {
 private:
     vector<Entry*> entries;
