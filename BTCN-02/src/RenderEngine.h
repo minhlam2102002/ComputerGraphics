@@ -19,7 +19,7 @@ struct RGBColor {
 class RenderEngine {
 private:
     int state;
-    Point *mouseDown, *mouseUp;
+    Point *mouseDown, *mouseUp, *mouseMove;
     RGBColor *color;
     float *frame;
 
@@ -33,12 +33,13 @@ public:
     void operator=(const RenderEngine &) = delete;
 
 private:
+    void boundaryFill(Point *, RGBColor *);
     void fill();
 
 public:
-    void onMouseClick(int button, int state, int x, int y);
-    void onMouseMove(int x, int y);
-    void setState(int option);
+    void onMouseClick(int, int, int, int);
+    void onMouseMove(int, int);
+    void setState(int);
     void setColor(RGBColor *);
     void renderObject(Point *, Point *);
     void render();

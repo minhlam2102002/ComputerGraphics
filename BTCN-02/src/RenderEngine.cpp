@@ -55,8 +55,17 @@ void RenderEngine::onMouseMove(int x, int y) {
         this->render();
     }
     if (this->mouseDown != nullptr) {
-        Point *mouseMove = new Point(x, y);
-        this->renderObject(this->mouseDown, mouseMove);
+        if (this->state == 0) {
+            glBegin(GL_LINE_STRIP);
+            if (this->mouseMove != nullptr)
+                glVertex2i(this->mouseMove->x, this->mouseMove->y);
+            else 
+                glVertex2i(this->mouseDown->x, this->mouseDown->y);
+            glVertex2i(x, y);
+            glEnd();
+        }
+        this->mouseMove = new Point(x, y);
+        this->renderObject(this->mouseDown, this->mouseMove);
     }
     glFlush();
 }
@@ -70,8 +79,13 @@ void RenderEngine::setColor(RGBColor* _color) {
 void RenderEngine::render() {
     Window::getInstance()->displayFrame(this->frame);
 }
+
+void RenderEngine::boundaryFill(Point* cur, RGBColor* color) {
+    
+}
+
 void RenderEngine::fill() {
-    Point *p = this->mouseDown;
+    this->boundaryFill(this->mouseDown, this->color);
 }
 
 void RenderEngine::renderObject(Point *start, Point *end) {

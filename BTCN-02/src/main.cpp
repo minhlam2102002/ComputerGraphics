@@ -9,6 +9,7 @@ void displayCallback() {
 void reshapeCallback(GLsizei width, GLsizei height) {
     glClear(GL_COLOR_BUFFER_BIT);
     Window::getInstance()->reshapeCallback(width, height);
+    glFlush();
 }
 void menuCallback(int option) {
     cout << "Option " << option << " is chosen." << endl;
