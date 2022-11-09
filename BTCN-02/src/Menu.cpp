@@ -5,7 +5,6 @@ Entry::Entry() {}
 Entry::Entry(const string& _name) {
     this->id = idCounter++;
     this->name = _name;
-    // idOf.insert({this->name, this->id});
 }
 void Entry::addToMenu() {
     glutAddMenuEntry(this->name.c_str(), this->id);

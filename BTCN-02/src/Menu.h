@@ -1,7 +1,6 @@
 #pragma once
 #include "library.h"
 
-extern map<string, int> idOf;
 class Entry {
 private:
     static int idCounter;

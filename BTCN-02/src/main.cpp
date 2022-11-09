@@ -45,7 +45,7 @@ void createMenu() {
 }
 
 int main(int argc, char** argv) {
-    Window* window = Window::getInstance(1000, 600, 100, 100);
+    Window* window = Window::getInstance(1000, 600);
     window->init(argc, argv);
     window->setDisplayMode(GLUT_SINGLE | GLUT_RGB);
     window->setTitle("My Paint");

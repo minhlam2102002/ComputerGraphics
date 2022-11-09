@@ -1,16 +1,46 @@
 #pragma once
 #include "library.h"
 
+struct Pixel {
+    int x, y;
+    Pixel();
+    Pixel(int, int);
+    void set();
+};
+// -----------------------------------------------------------
+struct RGBColor {
+    static const int BYTE_SIZE = 3;
+    float r, g, b;
+    RGBColor();
+    RGBColor(float, float, float);
+    void set();
+};
+// -----------------------------------------------------------
+class Frame {
+private:
+    int width, height;
+    float *frame;
+
+public:
+    Frame();
+    Frame(int, int);
+    void display();
+    void capture();
+    RGBColor *getPixelColor(Pixel *);
+    void setPixelColor(Pixel *, RGBColor *);
+};
+// -----------------------------------------------------------
 class Window {
+public:
+    static int width, height;
+
 private:
     static Window *window;
-    int width, height;
-    int x, y;
-    Window(int, int, int, int);
+    Window(int, int);
 
 public:
     static Window *getInstance();
-    static Window *getInstance(int, int, int, int);
+    static Window *getInstance(int, int);
     Window(Window &) = delete;
     void operator=(const Window &) = delete;
 
@@ -18,7 +48,7 @@ public:
     void init(int, char **);
     void setDisplayMode(int);
     void setTitle(string);
-    void setBackgroundColor(float r, float g, float b);
+    void setBackgroundColor(float, float, float);
     void setMouseCursor(int);
     void configureClippingArea();
     void registerDisplayCallback(void (*)(void));
@@ -28,7 +58,6 @@ public:
     void registerPassiveMotionCallback(void (*)(int, int));
     void reshapeCallback(GLsizei, GLsizei);
     void clearScreen();
-    void captureFrame(float*&);
-    void displayFrame(float*&);
+    Frame *getNewFrame();
     void start();
 };
