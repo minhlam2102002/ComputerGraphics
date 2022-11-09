@@ -8,6 +8,17 @@ Pixel::Pixel(int _x, int _y) {
 void Pixel::set() {
     glVertex2i(this->x, this->y);
 }
+Pixel Pixel::operator+(const Pixel &p) {
+    return Pixel(this->x + p.x, this->y + p.y);
+}
+Pixel Pixel::operator+=(const Pixel &p) {
+    this->x += p.x;
+    this->y += p.y;
+    return *this;
+}
+Pixel Pixel::operator-(const Pixel &p) {
+    return Pixel(this->x - p.x, this->y - p.y);
+}
 // -----------------------------------------------------------
 RGBColor::RGBColor() : RGBColor(0, 0, 0) {}
 RGBColor::RGBColor(float _r, float _g, float _b) {
@@ -18,8 +29,11 @@ RGBColor::RGBColor(float _r, float _g, float _b) {
 void RGBColor::set() {
     glColor3f(this->r, this->g, this->b);
 }
+bool RGBColor::operator==(const RGBColor &color) {
+    return this->r == color.r && this->g == color.g && this->b == color.b;
+}
 // -----------------------------------------------------------
-Frame::Frame() : Frame(Window::width, Window::height) {}
+Frame::Frame() : Frame(Window::getWidth(), Window::getHeight()) {}
 Frame::Frame(int _width, int _height) {
     this->width = _width;
     this->height = _height;
@@ -31,38 +45,44 @@ void Frame::capture() {
 void Frame::display() {
     glDrawPixels(this->width, this->height, GL_RGB, GL_FLOAT, this->frame);
 }
-RGBColor* Frame::getPixelColor(Pixel* p) {
-    int i = (p->y * this->width + p->x) * RGBColor::BYTE_SIZE;
-    return new RGBColor(this->frame[i], this->frame[i + 1], this->frame[i + 2]);
+RGBColor Frame::getPixelColor(Pixel p) {
+    int i = (p.y * this->width + p.x) * RGBColor::BYTE_SIZE;
+    return RGBColor(this->frame[i], this->frame[i + 1], this->frame[i + 2]);
 }
-void Frame::setPixelColor(Pixel* p, RGBColor* color) {
-    int i = (p->y * this->width + p->x) * RGBColor::BYTE_SIZE;
-    this->frame[i] = color->r;
-    this->frame[i + 1] = color->g;
-    this->frame[i + 2] = color->b;
+void Frame::setPixelColor(Pixel p, RGBColor color) {
+    int i = (p.y * this->width + p.x) * RGBColor::BYTE_SIZE;
+    this->frame[i] = color.r;
+    this->frame[i + 1] = color.g;
+    this->frame[i + 2] = color.b;
 }
-// -----------------------------------------------------------
-Window* Window::window = nullptr;
-int Window::width = 800;
-int Window::height = 600;
-Window* Window::getInstance(int width, int height) {
-    if (window == nullptr)
-        window = new Window(width, height);
-    return window;
-}
-Window* Window::getInstance() {
-    if (window == nullptr)
-        window = new Window(Window::width, Window::height);
-    return window;
+bool Frame::possess(Pixel p) {
+    return p.x >= 0 && p.x < this->width && p.y >= 0 && p.y < this->height;
 }
 // -----------------------------------------------------------
-Window::Window(int _width, int _height) {
-    Window::width = _width;
-    Window::height = _height;
+Window *Window::window = nullptr;
+Window::Window() {
+    this->width = 800;
+    this->height = 600;
 }
-void Window::init(int argc, char** argv) {
+Window *Window::getInstance() {
+    if (window == nullptr)
+        window = new Window;
+    return window;
+}
+int Window::getWidth() {
+    return getInstance()->width;
+}
+int Window::getHeight() {
+    return getInstance()->height;
+}
+// -----------------------------------------------------------
+void Window::init(int argc, char **argv) {
     glutInit(&argc, argv);
-    glutInitWindowSize(Window::width, Window::height);
+}
+void Window::setSize(int _width, int _height) {
+    this->width = _width;
+    this->height = _height;
+    glutInitWindowSize(this->width, this->height);
     glutInitWindowPosition(0, 0);
 }
 void Window::setDisplayMode(int mode) {
@@ -98,8 +118,8 @@ void Window::registerMouseCallback(void (*mouseCallback)(int, int, int, int)) {
     glutMouseFunc(mouseCallback);
 }
 void Window::reshapeCallback(GLsizei _width, GLsizei _height) {
-    Window::width = _width;
-    Window::height = _height;
+    this->width = _width;
+    this->height = _height;
     // glViewport(0, 0, this->width, this->height);
     // this->configureClippingArea();
 }

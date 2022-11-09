@@ -1,10 +1,12 @@
 #include "Menu.h"
 
 int Entry::idCounter = 0;
+map<string, int> Entry::idMap = {};
 Entry::Entry() {}
 Entry::Entry(const string& _name) {
     this->id = idCounter++;
     this->name = _name;
+    idMap[_name] = this->id;
 }
 void Entry::addToMenu() {
     glutAddMenuEntry(this->name.c_str(), this->id);
@@ -38,4 +40,7 @@ int Menu::create(void (*menuCallback)(int)) {
         entry->addToMenu();
 
     return this->id;
+}
+void Menu::attachTo(int button) {
+    glutAttachMenu(button);
 }

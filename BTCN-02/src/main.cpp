@@ -1,6 +1,7 @@
 #include "Menu.h"
 #include "RenderEngine.h"
 #include "Window.h"
+#include "Object.h"
 
 void displayCallback() {
     RenderEngine::getInstance()->render();
@@ -13,6 +14,9 @@ void reshapeCallback(GLsizei width, GLsizei height) {
 }
 void menuCallback(int option) {
     cout << "Option " << option << " is chosen." << endl;
+    if (option == Entry::idMap["Exit"]) {
+        exit(0);
+    }
     RenderEngine::getInstance()->setState(option);
 }
 void mouseCallback(int button, int state, int x, int y) {
@@ -35,18 +39,20 @@ void createMenu() {
         ->addEntries({"Arrow", "Star"});
     menu->addSubMenu("Operator")
         ->addEntries({"Plus", "Minus", "Multiply", "Divide"});
-    menu->addSubMenu("FillColor")
-        ->addEntries({"Blue", "Red", "Yellow"});
+    menu->addSubMenu("Color")
+        ->addEntries({"Red", "Green", "Blue", "Yellow", "Purple", "Cyan", "White"});
+    menu->addEntries({"Fill"});
     menu->addEntries({"Erase"});
     menu->addEntries({"Clear"});
-    menu->addEntries({"Quit"});
+    menu->addEntries({"Exit"});
     menu->create(menuCallback);
-    glutAttachMenu(GLUT_RIGHT_BUTTON);
+    menu->attachTo(GLUT_RIGHT_BUTTON);
 }
 
 int main(int argc, char** argv) {
-    Window* window = Window::getInstance(1000, 600);
+    Window* window = Window::getInstance();
     window->init(argc, argv);
+    window->setSize(1000, 800);
     window->setDisplayMode(GLUT_SINGLE | GLUT_RGB);
     window->setTitle("My Paint");
     // window->setBackgroundColor(0.9, 0.9, 0.9);

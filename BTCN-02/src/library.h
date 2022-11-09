@@ -6,8 +6,6 @@ using namespace std;
 using namespace std::chrono;
 using namespace std::placeholders;
 
-extern int SCREEN_WIDTH, SCREEN_HEIGHT;
-
 // static auto measureTime = [](auto func) {
 //     auto start = high_resolution_clock::now();
 //     func();

@@ -6,6 +6,9 @@ struct Pixel {
     Pixel();
     Pixel(int, int);
     void set();
+    Pixel operator+(const Pixel &);
+    Pixel operator+=(const Pixel &);
+    Pixel operator-(const Pixel &);
 };
 // -----------------------------------------------------------
 struct RGBColor {
@@ -14,6 +17,7 @@ struct RGBColor {
     RGBColor();
     RGBColor(float, float, float);
     void set();
+    bool operator==(const RGBColor&);
 };
 // -----------------------------------------------------------
 class Frame {
@@ -26,26 +30,27 @@ public:
     Frame(int, int);
     void display();
     void capture();
-    RGBColor *getPixelColor(Pixel *);
-    void setPixelColor(Pixel *, RGBColor *);
+    RGBColor getPixelColor(Pixel);
+    void setPixelColor(Pixel, RGBColor);
+    bool possess(Pixel);
 };
 // -----------------------------------------------------------
 class Window {
-public:
-    static int width, height;
-
 private:
+    int width, height;
     static Window *window;
-    Window(int, int);
+    Window();
 
 public:
     static Window *getInstance();
-    static Window *getInstance(int, int);
+    static int getWidth();
+    static int getHeight();
     Window(Window &) = delete;
     void operator=(const Window &) = delete;
 
 public:
     void init(int, char **);
+    void setSize(int, int);
     void setDisplayMode(int);
     void setTitle(string);
     void setBackgroundColor(float, float, float);
@@ -58,6 +63,5 @@ public:
     void registerPassiveMotionCallback(void (*)(int, int));
     void reshapeCallback(GLsizei, GLsizei);
     void clearScreen();
-    Frame *getNewFrame();
     void start();
 };

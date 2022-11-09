@@ -10,8 +10,9 @@ RenderEngine::RenderEngine() {
     this->color = RGBColor(1, 1, 1);
     this->color.set();
     this->isClicked = false;
-    this->state = 0;
     this->frame = new Frame();
+    this->state = 0;
+    cout << "Option 0 is chosen" << endl;
 }
 // -----------------------------------------------------------
 void RenderEngine::onMouseClick(int button, int state, int x, int y) {
@@ -19,6 +20,9 @@ void RenderEngine::onMouseClick(int button, int state, int x, int y) {
         this->mouseDown = Pixel(x, y);
         this->mouseMove = Pixel(x, y);
         this->isClicked = true;
+        if (this->state == Entry::idMap["Fill"]) {
+            this->fill();
+        }
     }
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
         this->mouseUp = Pixel(x, y);
@@ -29,7 +33,7 @@ void RenderEngine::onMouseClick(int button, int state, int x, int y) {
 void RenderEngine::onMouseMove(int x, int y) {
     if (!this->isClicked)
         return;
-    if (this->state == 0) {
+    if (this->state == Entry::idMap["Brush"]) {
         glBegin(GL_LINES);
         glVertex2i(this->mouseMove.x, this->mouseMove.y);
         glVertex2i(x, y);
@@ -53,71 +57,36 @@ void RenderEngine::setColor(RGBColor _color) {
 void RenderEngine::render() {
     this->frame->display();
 }
-// int dx[] = {1, 0, -1, 0};
-// int dy[] = {0, 1, 0, -1};
-void RenderEngine::boundaryFill(Pixel cur, RGBColor color) {
+void RenderEngine::boundaryFill(Pixel cur, RGBColor color1, RGBColor color2) {
+    int dx[] = {1, 0, -1, 0};
+    int dy[] = {0, 1, 0, -1};
+    for (int i = 0; i < 4; i++) {
+        Pixel next = Pixel(cur.x + dx[i], cur.y + dy[i]);
+        if (this->frame->possess(next)) {
+            RGBColor color = this->frame->getPixelColor(next);
+            if (color == color1) {
+                this->frame->setPixelColor(next, color2);
+                this->boundaryFill(next, color1, color2);
+            }
+        }
+    }
 }
 void RenderEngine::fill() {
-    this->boundaryFill(this->mouseDown, this->color);
+    RGBColor color1 = this->frame->getPixelColor(this->mouseDown);
+    this->boundaryFill(this->mouseDown, color1, this->color);
 }
 void RenderEngine::renderObject(Pixel start, Pixel end) {
-    int dx = end.x - start.x;
-    int dy = end.y - start.y;
-    int signX = dx > 0 ? 1 : -1;
-    int signY = dy > 0 ? 1 : -1;
-    if (this->state == 1) {
-        glBegin(GL_LINES);
-        glVertex2i(start.x, start.y);
-        glVertex2i(end.x, end.y);
-        glEnd();
-    } else if (this->state == 2) {
-        glBegin(GL_LINE_LOOP);
-        glVertex2i(start.x, start.y);
-        glVertex2i(end.x, start.y);
-        glVertex2i(end.x, end.y);
-        glVertex2i(start.x, end.y);
-        glEnd();
-    }
-    if (this->state == 3) {
-        int sideLength = min(abs(dx), abs(dy));
-        Pixel squareEnd = Pixel(start.x + sideLength * signX, start.y + sideLength * signY);
-        glBegin(GL_LINE_LOOP);
-        glVertex2i(start.x, start.y);
-        glVertex2i(squareEnd.x, start.y);
-        glVertex2i(squareEnd.x, squareEnd.y);
-        glVertex2i(start.x, squareEnd.y);
-        glEnd();
-    } else if (this->state == 4) {
-        int radius = max(abs(dx), abs(dy)) / 2;
-        Pixel center = Pixel(start.x + signX * radius, start.y + signY * radius);
-        int perimeter = 2.0 * M_PI * radius;
-        float angle = 0;
-        const float angleInc = 2.0 * M_PI / perimeter;
-        int x, y;
-        glBegin(GL_LINE_LOOP);
-        while (perimeter--) {
-            angle += angleInc;
-            x = round((float)center.x + radius * cos(angle));
-            y = round((float)center.y + radius * sin(angle));
-            glVertex2i(x, y);
-        }
-        glEnd();
-    } else if (this->state == 5) {
-        int a = abs(dx) / 2;
-        int b = abs(dy) / 2;
-        Pixel center = Pixel((start.x + end.x)/2, (start.y + end.y)/2);
-        int perimeter = M_PI * 2 * max(a, b);
-        float angle = 0;
-        const float angleInc = 2.0 * M_PI / perimeter;
-        int x, y;
-        glBegin(GL_LINE_LOOP);
-        while(perimeter--) {
-            angle += angleInc;
-            x = round((float)center.x + a * cos(angle));
-            y = round((float)center.y + b * sin(angle));
-            glVertex2i(x, y);
-        }
-        glEnd();
-        glFlush();
+    if (this->state == Entry::idMap["Line"]) {
+        renderLine(start, end);
+    } else if (this->state == Entry::idMap["Rectangle"]) {
+        renderRectangle(start, end);
+    } else if (this->state == Entry::idMap["Square"]) {
+        renderSquare(start, end);
+    } else if (this->state == Entry::idMap["Circle"]) {
+        renderCircle(start, end);
+    } else if (this->state == Entry::idMap["Ellipse"]) {
+        renderEllipse(start, end);
+    } else if (this->state == Entry::idMap["Triangle"]) {
+        renderTriangle(start, end);
     }
 }

@@ -2,6 +2,8 @@
 #include "library.h"
 
 class Entry {
+public:
+    static map<string, int> idMap;
 private:
     static int idCounter;
 
@@ -26,4 +28,5 @@ public:
     Menu* addEntries(const vector<string>&);
     void addToMenu();
     int create(void (*)(int));
+    void attachTo(int);
 };

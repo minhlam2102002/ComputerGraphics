@@ -1,5 +1,7 @@
 #pragma once
 #include "Window.h"
+#include "Menu.h"
+#include "Object.h"
 
 // -----------------------------------------------------------
 class RenderEngine {
@@ -20,7 +22,7 @@ public:
     void operator=(const RenderEngine &) = delete;
 
 private:
-    void boundaryFill(Pixel, RGBColor);
+    void boundaryFill(Pixel, RGBColor, RGBColor);
     void fill();
 
 public:
