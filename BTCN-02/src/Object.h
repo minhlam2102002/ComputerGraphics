@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "global.h"
 
 void renderLine(Pixel, Pixel);
 void renderRectangle(Pixel, Pixel);

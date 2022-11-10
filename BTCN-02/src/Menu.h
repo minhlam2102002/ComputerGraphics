@@ -1,5 +1,5 @@
 #pragma once
-#include "library.h"
+#include "global.h"
 
 class Entry {
 public:

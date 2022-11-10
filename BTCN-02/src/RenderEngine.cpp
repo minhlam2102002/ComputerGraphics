@@ -21,7 +21,9 @@ void RenderEngine::onMouseClick(int button, int state, int x, int y) {
         this->mouseMove = Pixel(x, y);
         this->isClicked = true;
         if (this->state == Entry::idMap["Fill"]) {
-            this->fill();
+            this->frame->fill(this->mouseDown, this->color);
+            this->frame->display();
+            glFlush();
         }
     }
     if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
@@ -34,10 +36,7 @@ void RenderEngine::onMouseMove(int x, int y) {
     if (!this->isClicked)
         return;
     if (this->state == Entry::idMap["Brush"]) {
-        glBegin(GL_LINES);
-        glVertex2i(this->mouseMove.x, this->mouseMove.y);
-        glVertex2i(x, y);
-        glEnd();
+        renderLine(this->mouseMove, Pixel(x, y));
         this->mouseMove = Pixel(x, y);
     } else {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -56,24 +55,6 @@ void RenderEngine::setColor(RGBColor _color) {
 }
 void RenderEngine::render() {
     this->frame->display();
-}
-void RenderEngine::boundaryFill(Pixel cur, RGBColor color1, RGBColor color2) {
-    int dx[] = {1, 0, -1, 0};
-    int dy[] = {0, 1, 0, -1};
-    for (int i = 0; i < 4; i++) {
-        Pixel next = Pixel(cur.x + dx[i], cur.y + dy[i]);
-        if (this->frame->possess(next)) {
-            RGBColor color = this->frame->getPixelColor(next);
-            if (color == color1) {
-                this->frame->setPixelColor(next, color2);
-                this->boundaryFill(next, color1, color2);
-            }
-        }
-    }
-}
-void RenderEngine::fill() {
-    RGBColor color1 = this->frame->getPixelColor(this->mouseDown);
-    this->boundaryFill(this->mouseDown, color1, this->color);
 }
 void RenderEngine::renderObject(Pixel start, Pixel end) {
     if (this->state == Entry::idMap["Line"]) {

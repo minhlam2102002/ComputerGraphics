@@ -1,6 +1,6 @@
 #pragma once
-#include "Window.h"
 #include "Menu.h"
+#include "Frame.h"
 #include "Object.h"
 
 // -----------------------------------------------------------
@@ -20,10 +20,6 @@ public:
     static RenderEngine *getInstance();
     RenderEngine(RenderEngine &) = delete;
     void operator=(const RenderEngine &) = delete;
-
-private:
-    void boundaryFill(Pixel, RGBColor, RGBColor);
-    void fill();
 
 public:
     void onMouseClick(int, int, int, int);
