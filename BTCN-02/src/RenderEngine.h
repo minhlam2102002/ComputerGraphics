@@ -1,16 +1,16 @@
 #pragma once
+#include "Canvas.h"
+#include "DrawFunction.h"
 #include "Menu.h"
-#include "Frame.h"
-#include "Object.h"
 
 // -----------------------------------------------------------
 class RenderEngine {
 private:
     int state;
-    Pixel mouseDown, mouseUp, mouseMove;
-    bool isClicked;
     RGBColor color;
-    Frame *frame;
+    bool isClicked, isFilling;
+    Pixel mouseDown, mouseUp, mouseMove;
+    Canvas *canvas;
 
 private:
     RenderEngine();
@@ -22,10 +22,9 @@ public:
     void operator=(const RenderEngine &) = delete;
 
 public:
-    void onMouseClick(int, int, int, int);
-    void onMouseMove(int, int);
-    void setState(int);
-    void setColor(RGBColor);
-    void renderObject(Pixel, Pixel);
-    void render();
+    void displayCallback();
+    void reshapeCallback(int, int);
+    void mouseCallback(int, int, int, int);
+    void motionCallback(int, int);
+    void menuCallback(int);
 };

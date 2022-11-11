@@ -1,14 +1,10 @@
 #pragma once
+#include <bits/stdc++.h>
 #include <GL/glut.h>
-#include <iostream>
-#include <vector>
-#include <chrono>
-#include <map>
-#include <cmath>
-#include <queue>
 
 using namespace std;
 using namespace std::chrono;
+using namespace std::placeholders;
 
 extern int SCREEN_WIDTH, SCREEN_HEIGHT;
 
@@ -17,9 +13,9 @@ struct RGBColor {
     float r, g, b;
     RGBColor();
     RGBColor(float, float, float);
-    void set();
-    bool operator==(const RGBColor &);
-    bool operator!=(const RGBColor &);
+
+    friend bool operator==(const RGBColor&, const RGBColor&);
+    friend bool operator!=(const RGBColor&, const RGBColor&);
     friend ostream& operator<<(ostream&, const RGBColor&);
 };
 
@@ -27,12 +23,18 @@ struct Pixel {
     int x, y;
     Pixel();
     Pixel(int, int);
-    void set();
-    vector<Pixel> getNeighbours();
-    Pixel operator+(const Pixel &);
-    Pixel operator+=(const Pixel &);
-    Pixel operator-(const Pixel &);
+
+    vector<Pixel> getNeighbours() const;
+
+    friend Pixel operator+(const Pixel&, const Pixel&);
+    friend Pixel operator-(const Pixel&, const Pixel&);
+    friend Pixel operator/(const Pixel&, const int&);
     friend ostream& operator<<(ostream&, const Pixel&);
 };
 
 int measureTime(void (*)());
+void glVertex(const Pixel &);
+void glColor(const RGBColor &);
+
+extern vector<RGBColor> colorsMap;
+extern vector<string> colorNames;

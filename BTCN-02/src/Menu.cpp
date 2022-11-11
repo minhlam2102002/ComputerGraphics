@@ -1,12 +1,13 @@
 #include "Menu.h"
 
+map<int, string> nameOf = {};
+
 int Entry::idCounter = 0;
-map<string, int> Entry::idMap = {};
 Entry::Entry() {}
 Entry::Entry(const string& _name) {
     this->id = idCounter++;
     this->name = _name;
-    idMap[_name] = this->id;
+    nameOf[id] = name;
 }
 void Entry::addToMenu() {
     glutAddMenuEntry(this->name.c_str(), this->id);

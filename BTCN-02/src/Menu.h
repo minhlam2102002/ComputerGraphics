@@ -2,8 +2,6 @@
 #include "global.h"
 
 class Entry {
-public:
-    static map<string, int> idMap;
 private:
     static int idCounter;
 
@@ -30,3 +28,5 @@ public:
     int create(void (*)(int));
     void attachTo(int);
 };
+
+extern map<int, string> nameOf;

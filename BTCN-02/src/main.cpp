@@ -1,84 +1,44 @@
 #include "Menu.h"
 #include "RenderEngine.h"
-#include "Object.h"
 
-void displayCallback() {
-    RenderEngine::getInstance()->render();
-    glFlush();
-}
-void reshapeCallback(GLsizei width, GLsizei height) {
-    glClear(GL_COLOR_BUFFER_BIT);
-    RenderEngine::getInstance()->render();
-    glFlush();
-}
-void menuCallback(int option) {
-    cout << "Option " << option << " is chosen." << endl;
-    if (option == Entry::idMap["Red"]) {
-        RenderEngine::getInstance()->setColor(RGBColor(1, 0, 0));
-    } else if (option == Entry::idMap["Green"]) {
-        RenderEngine::getInstance()->setColor(RGBColor(0, 1, 0));
-    } else if (option == Entry::idMap["Blue"]) {
-        RenderEngine::getInstance()->setColor(RGBColor(0, 0, 1));
-    } else if (option == Entry::idMap["Yellow"]) {
-        RenderEngine::getInstance()->setColor(RGBColor(1, 1, 0));
-    } else if (option == Entry::idMap["Cyan"]) {
-        RenderEngine::getInstance()->setColor(RGBColor(0, 1, 1));
-    } else if (option == Entry::idMap["Magenta"]) {
-        RenderEngine::getInstance()->setColor(RGBColor(1, 0, 1));
-    } else if (option == Entry::idMap["White"]) {
-        RenderEngine::getInstance()->setColor(RGBColor(1, 1, 1));
-    } else if (option == Entry::idMap["Black"]) {
-        RenderEngine::getInstance()->setColor(RGBColor(0, 0, 0));
-    } else if (option == Entry::idMap["Clear"]) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glFlush();
-    } 
-    if (option == Entry::idMap["Exit"]) {
-        exit(0);
-    }
-    RenderEngine::getInstance()->setState(option);
-}
-void mouseCallback(int button, int state, int x, int y) {
-    RenderEngine::getInstance()->onMouseClick(button, state, x, y);
-}
-void motionCallback(int x, int y) {
-    RenderEngine::getInstance()->onMouseMove(x, y);
-}
 void createMenu() {
     Menu* menu = new Menu("Main");
     menu->addEntries({"Brush"});
     menu->addEntries({"Line"});
+    menu->addSubMenu("Triangle")
+        ->addEntries({"Right", "Equilateral", "Isosceles"});
     menu->addSubMenu("Quadrangle")
         ->addEntries({"Rectangle", "Square"});
     menu->addSubMenu("ConicSection")
         ->addEntries({"Circle", "Ellipse"});
     menu->addSubMenu("Polygon")
-        ->addEntries({"Pentagon", "Hexagon"});
+        ->addEntries({"Pentagon", "Hexagon", "Octagon"});
     menu->addSubMenu("Shape")
         ->addEntries({"Arrow", "Star"});
     menu->addSubMenu("Operator")
         ->addEntries({"Plus", "Minus", "Multiply", "Divide"});
     menu->addSubMenu("Color")
-        ->addEntries({"Red", "Green", "Blue", "Yellow", "Purple", "Cyan", "White"});
+        ->addEntries(colorNames);
     menu->addEntries({"Fill"});
-    menu->addEntries({"Erase"});
+    // menu->addEntries({"Erase"});
     menu->addEntries({"Clear"});
     menu->addEntries({"Exit"});
-    menu->create(menuCallback);
+    menu->create([](int option) {
+        RenderEngine::getInstance()->menuCallback(option);
+    });
     menu->attachTo(GLUT_RIGHT_BUTTON);
 }
 
 int SCREEN_WIDTH = 1000, SCREEN_HEIGHT = 800;
 
-
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
-    
-    SCREEN_WIDTH = glutGet(GLUT_SCREEN_WIDTH);
-    SCREEN_HEIGHT = glutGet(GLUT_SCREEN_HEIGHT);
+
+    SCREEN_WIDTH = glutGet(GLUT_SCREEN_WIDTH) * 0.8;
+    SCREEN_HEIGHT = glutGet(GLUT_SCREEN_HEIGHT) * 0.8;
 
     glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    glutInitWindowPosition(0, 0);
+    glutInitWindowPosition(100, 100);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
     glutCreateWindow("My Paint");
@@ -89,10 +49,18 @@ int main(int argc, char** argv) {
     glLoadIdentity();
     gluOrtho2D(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
-    glutDisplayFunc(displayCallback);
-    glutReshapeFunc(reshapeCallback);
-    glutMotionFunc(motionCallback);
-    glutMouseFunc(mouseCallback);
+    glutDisplayFunc([] {
+        RenderEngine::getInstance()->displayCallback();
+    });
+    glutReshapeFunc([](int width, int height) {
+        RenderEngine::getInstance()->reshapeCallback(width, height);
+    });
+    glutMotionFunc([](int x, int y) {
+        RenderEngine::getInstance()->motionCallback(x, y);
+    });
+    glutMouseFunc([](int button, int state, int x, int y) {
+        RenderEngine::getInstance()->mouseCallback(button, state, x, y);
+    });
 
     createMenu();
 
