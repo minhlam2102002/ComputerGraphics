@@ -1,35 +1,33 @@
 # Usage:
 # make        # compile all binary
-# make build  # build the release binary
 # make clean  # remove ALL binaries and objects
 
-.PHONY = all clean main
+.PHONY = all clean
 
-RELEASE_DIR := ./release
-LIBS_DIR = ./release/libs/
+# compiler to use
+CC = g++
+LINKERFLAG = -lm
+FLAGS =
 
 LIBS = -lglut -lGLU -lGL
 
-# FLAGS = -Wl,-rpath,$(LIBS_DIR)
-LINKERFLAG = -lm
-
 TARGET = main.cpp
+BIN = main
+
 SRCS := $(wildcard *.cpp)
 SRCS := $(filter-out $(TARGET), $(SRCS))
+
 HDRS = $(wildcard *.h)
 OBJS = $(SRCS:%.cpp=%.o)
 
-all: $(OBJS) main
+all: $(TARGET) $(SRCS) $(HDRS) $(OBJS)
+	@echo "Compiling.."
+	$(CC) $(LINKERFLAG) $(TARGET) $(OBJS) -o $(BIN) $(LIBS)
 
 %.o: %.cpp
-	${CXX} -c $< -o $@ $(LIBS)
-main: $(TARGET) $(SRCS) $(HDRS)
-	$(CXX) $(LINKERFLAG) $(TARGET) $(OBJS) -o main $(LIBS)
-
-# build: main.cpp
-# 	@echo "Building release..."
-# 	$(CXX) main.cpp -o ../release/main -L$(LIBS_DIR) $(LIBS) $(FLAGS)
+	@echo "Creating object %..."
+	${CC} -c $< -o $@ $(LIBS)
 
 clean:
 	@echo "Cleaning up..."
-	$(RM) *.o main
+	$(RM) *.o $(BIN)

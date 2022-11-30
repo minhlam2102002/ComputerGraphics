@@ -27,13 +27,20 @@ struct Pixel {
     vector<Pixel> getNeighbours() const;
 
     Pixel& operator+=(const Pixel&);
+    Pixel& operator-=(const Pixel&);
     Pixel& operator/=(const int&);
-
+    Pixel& operator*= (const int&);
     friend Pixel operator+(const Pixel&, const Pixel&);
     friend Pixel operator-(const Pixel&, const Pixel&);
     friend Pixel operator/(const Pixel&, const int&);
     friend Pixel operator*(const Pixel&, const int&);
     friend ostream& operator<<(ostream&, const Pixel&);
+};
+
+struct Point{
+    double x, y;
+    Point();
+    Point(double, double);
 };
 
 void glVertex(const Pixel &);

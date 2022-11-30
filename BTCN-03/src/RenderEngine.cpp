@@ -64,8 +64,6 @@ void RenderEngine::motionCallback(int x, int y) {
     glFlush();
 }
 void RenderEngine::menuCallback(int option) {
-    cout << "Selected: " << nameOf[option] << " option" << endl;
-
     for (int i = 0; i < colorNames.size(); i++) {
         if (nameOf[option] == colorNames[i]) {
             this->color = colorsMap[i];

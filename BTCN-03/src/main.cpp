@@ -20,7 +20,6 @@ void createMenu() {
     menu->addSubMenu("Color")
         ->addEntries(colorNames);
     menu->addEntries({"Fill"});
-    // menu->addEntries({"Erase"});
     menu->addEntries({"Clear"});
     menu->addEntries({"Exit"});
     menu->create([](int option) {
